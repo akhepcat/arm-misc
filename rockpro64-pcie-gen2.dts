@@ -16,7 +16,7 @@
 /*
         ## To install:
 
-        *  dtc -O dtb -o /boot/dtb/rockchip/overlay/rockchip-pcie-gen2.dtbo rockpro64-pcie-gen2.dts
+        *  dtc -@ -O dtb -o /boot/dtb/rockchip/overlay/rockchip-pcie-gen2.dtbo rockpro64-pcie-gen2.dts
 
         *  Edit /boot/armbianEnv.txt and add
                 overlays=pcie-gen2   ( or:  orverlays=[existing] pcie-gen2 )

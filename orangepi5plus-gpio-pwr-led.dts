@@ -30,7 +30,7 @@ state:  linux/include/linux/gpio/machine.h:             #define GPIO_ACTIVE_HIGH
 
         ## To install:
 
-        * dtc -O dtb -o /boot/dtb/rockchip/overlay/rk3588-gpio-pwr-led.dtbo orangepi5plus-gpio-pwr-led.dts
+        * dtc -@ -O dtb -o /boot/dtb/rockchip/overlay/rk3588-gpio-pwr-led.dtbo orangepi5plus-gpio-pwr-led.dts
 
         *  Edit /boot/armbianEnv.txt and add
                 overlays=gpio-pwr-led   ( or:  orverlays=[existing] gpio-pwr-led )
