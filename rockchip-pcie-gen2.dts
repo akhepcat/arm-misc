@@ -1,0 +1,27 @@
+/*  For  RockPro64 boards only!! */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+
+        fragment@0 {
+                target-path = "/pcie@f8000000";
+                __overlay__ {
+                        max-link-speed = <0x02>;
+
+                };
+        };
+
+/*
+        ## To install:
+
+        *  dtc -O dtb -o /boot/dtb/rockchip/overlay/rockchip-pcie-gen2.dtbo rockchip-pcie-gen2.dts
+
+        *  Edit /boot/armbianEnv.txt and add
+                overlays=pcie-gen2   ( or:  orverlays=[existing] pcie-gen2 )
+
+        *  reboot
+ */
+
+};
