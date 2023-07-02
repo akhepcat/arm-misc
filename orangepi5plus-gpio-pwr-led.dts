@@ -1,0 +1,40 @@
+/*  For  OrangePi5+ boards only!! */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+
+        fragment@0 {
+                target-path = "/";
+                __overlay__ {
+                        leds: gpio-leds {
+                                pwr_led@3 {
+                                        gpios = <&gpio3 17 0>;
+                                        label = "pwr_led";
+                                        linux,default-trigger = "activity";
+                                        linux,default-trigger-delay-ms = <0>;
+                                };
+                        };
+                };
+        };
+};
+
+/* 
+
+Defines from the 'gpios = <&gpio3 [pin] [state]>'  line
+  pin:  linux/include/dt-bindings/pinctrl/rockchip.h:   #define RK_PC1             17
+state:  linux/include/linux/gpio/machine.h:             #define GPIO_ACTIVE_HIGH   (0 << 0)
+
+        (other available GPIOs, that aren't overloaded:  GPIO1_A4, GPIO1_A7, GPIO1_B0 )
+
+        ## To install:
+
+        * dtc -O dtb -o /boot/dtb/rockchip/overlay/rk3588-gpio-pwr-led.dtbo orangepi5plus-gpio-pwr-led.dts
+
+        *  Edit /boot/armbianEnv.txt and add
+                overlays=gpio-pwr-led   ( or:  orverlays=[existing] gpio-pwr-led )
+
+        *  reboot
+
+*/
