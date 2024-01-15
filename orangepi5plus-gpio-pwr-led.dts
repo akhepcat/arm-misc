@@ -10,7 +10,7 @@
                 __overlay__ {
                         leds: gpio-leds {
                                 pwr_led@3 {
-                                        gpios = <&gpio3 17 0>;
+                                        gpios = <&gpio1 7 0>;
                                         label = "pwr_led";
                                         linux,default-trigger = "activity";
                                         linux,default-trigger-delay-ms = <0>;
@@ -23,10 +23,12 @@
 /* 
 
 Defines from the 'gpios = <&gpio3 [pin] [state]>'  line
-  pin:  linux/include/dt-bindings/pinctrl/rockchip.h:   #define RK_PC1             17
+  pin:  from linux/include/dt-bindings/pinctrl/rockchip.h
 state:  linux/include/linux/gpio/machine.h:             #define GPIO_ACTIVE_HIGH   (0 << 0)
 
-        (other available GPIOs, that aren't overloaded:  GPIO1_A4, GPIO1_A7, GPIO1_B0 )
+	 RK_PA7, aka GPIO1_A7, aka GPIO 39, aka pin 13	 #define RK_PA7            7
+
+        (other available GPIOs, that aren't overloaded:  GPIO1_A4, GPIO1_B0, GPIO3_C1, ... )
 
         ## To install:
 
