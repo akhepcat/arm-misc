@@ -17,7 +17,7 @@ fi
 envf=$(find /boot -maxdepth 1 -iname 'armbianEnv.txt' -o -iname 'orangepiEnv.txt')
 if [ -z "${PWMCHIP}" ]
 then
-	PWMS="$(grep -oE 'pwm[0-9]+-m[0-9]+' ${envf:-/dev/null})"	# "pwm14-m0"
+	PWMS="$(grep -oE 'pwm[0-9]+-?m[0-9]+' ${envf:-/dev/null})"	# "pwm14-m0"  or pwm14m0
 	PWMA=($PWMS)
 	pc=${#PWMA[@]} 
 	if [ ${pc} -gt 1 ]
@@ -26,7 +26,9 @@ then
 		exit 1
 	fi
 
-	case ${PWMS%-*} in
+	PWMS=${PWMS%-*}
+
+	case ${PWMS%m*} in
 		pwm0)	IOADDR=fd8b0000;;
 		pwm1)	IOADDR=fd8b0010;;
 		pwm3)	IOADDR=fd8b0030;;
@@ -41,7 +43,7 @@ then
 	esac
 
 	PWMCHIP=$(/bin/ls -l /sys/class/pwm/ | grep ${IOADDR} | grep -owE 'pwmchip[0-9]' | head -1)
-	PWMPORT=${PWMS#*-m}
+	PWMPORT=${PWMS##*m}
 fi
 
 FREQ=$(echo "scale = 5; print ( ( 1 / ${FREQ} ) * 1000000000 ); print \"\n\";"  | bc)
