@@ -1,0 +1,46 @@
+/*  For  OrangePi5+ boards only!! */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+
+	fragment@0 {
+		target-path = "/gpio-leds";
+		__overlay__ {
+			drive-led {
+				label = "drive_led";
+				compatible = "gpio-leds";
+				color = <0x00000000>;
+	               		gpios = <&gpio1 7 0>;
+				function = "indicator";
+				function-enumerator = <0x00000001>;
+				default-state = "on";
+				trigger = "activity";
+				linux,default-trigger = "activity";
+				max-brightness = <255>;
+				default-trigger-delay-ms = <0>;
+			};
+        	};
+	};
+};
+
+
+/* 
+
+Defines from the 'gpios = <&gpio3 [pin] [state]>'  line
+  pin:  linux/include/dt-bindings/pinctrl/rockchip.h:   #define RK_PA7             7
+state:  linux/include/linux/gpio/machine.h:             #define GPIO_ACTIVE_HIGH   (0 << 0)
+
+        (other available GPIOs, that aren't overloaded:  GPIO1_A4, GPIO1_A7 (7), GPIO1_B0, GPIO3_C1 (17) )
+
+        ## To install:
+
+        * dtc -A -s -@ -O dtb -o /boot/dtb/rockchip/overlay/rk3588-gpio-drive-led.dtbo orangepi5plus-gpio-drive-led.dts
+
+        *  Edit /boot/orangepiEnv.txt and add
+                overlays=gpio-drive-led   ( or:  orverlays=[existing] gpio-drive-led )
+
+        *  reboot
+
+*/
