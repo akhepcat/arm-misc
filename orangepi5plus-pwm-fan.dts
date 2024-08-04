@@ -1,0 +1,51 @@
+/*  For  OrangePi5+ boards only!! */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+
+        fragment@0 {
+                target = <&fan>;
+                __overlay__ {
+			pwms = <&pwm3 0 50000 0>;
+			cooling-levels = <0 37 88 128 200 255>;
+			rockchip,temp-trips = <35000 1 42000 2 50000 3 60000 4 70000 5>;
+                };
+        };
+};
+
+
+/* 
+	## Notes:
+	pwms = <&pwm3 0 50000 0>：
+		arg 1 is the phandle for the PWM fan control; default is PWM3 ( 0x1d8 ); 
+		arg 2 is unknown.
+		arg 3 is the period of the PWM pulse (1/$period = freq)
+		arg 4 is unknown.
+
+	cooling-levels = <0 50 100 150 200 255>：It is used to configure the steppings for the fan speed (PWM duty cycle). 
+		The number of steps, and percentage of the duty cycle, are defined here.
+		The default configuration defines 6 steps. The range of the speed is 0-255.  (0=0%, 255=100%)
+		level=( int( $duty_cycle_percent / (100/256=.390625) ) - 1);
+
+	rockchip,temp-trips：It is used to configure the corresponding relationship between the CPU temperature and the fan speed. 
+		It can be adjusted according to actual needs. The default configuration is:
+		(step 0: inferred, anything below step 1)
+		step 1: 50 degrees
+		step 2: 55
+		step 3: 60
+		step 4: 65
+		step 5: 70 degrees
+
+
+        ## To install:
+
+        * dtc -A -s -@ -O dtb -o /boot/dtb/rockchip/overlay/rk3588-pwm-fan.dtbo orangepi5plus-pwm-fan.dts
+
+        *  Edit /boot/orangepiEnv.txt and add
+                overlays=pwm-fan   ( or:  orverlays=[existing] pwm-fan )
+
+        *  reboot
+
+*/
