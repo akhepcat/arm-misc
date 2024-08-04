@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+
+/*    compatible = "xunlong,orangepi-5-plus", "rockchip,rk3588-orangepi-5-plus", "rockchip,rk3588"; */
+
+    fragment@0 {
+        target = <&pwm14>;
+        __overlay__ {
+            status = "okay";
+        };
+    };
+};
+
+/* dtc -@ -A -s -O dtb -o /boot/dtb/rockchip/overlay/rk3588-pwm14-m0.dtbo orangepi5plus-pwm14m0.dts */
