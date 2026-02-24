@@ -6,7 +6,7 @@
 / {
     compatible = "rockchip,rk3399";
 
-    fragment@0 {
+    fragment@10 {
         target = <&pinctrl>;
         __overlay__ {
             leds {
@@ -18,7 +18,7 @@
         };
     };
 
-    fragment@1 {
+    fragment@111 {
         /* target-path is okay if /leds exists, otherwise use target = <&leds> */
         target-path = "/leds"; 
         __overlay__ {
