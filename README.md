@@ -41,3 +41,16 @@ successfully, but rumor has it that not all expansion cards will work correctly.
   Basic one-liner to pull the max supported PCIe speeds from the system DTB.
 Should work on any device-tree enabled system.
 
+* rockpro64-gpio-misc-fan.dts
+
+  Provides kernel control of a simple on/off GPIO-triggered fan on the RockPro64
+defaulting to the temperature map 'cpu-high' but changable via CLI or
+editing the overlay source.   Multiple fans can be defined, following the
+notes in the source.
+
+* rockpro64-gpio-misc-led.dts
+
+  Overlay source to provide a simple driver for a single gpio-based LED,
+typically used for a power or drive activity LED on a case.  Additional LEDs
+can be supported by duplicating the apropriate section, renaming the
+section, incrementing the enumerator, and then changing the label and gpio.
