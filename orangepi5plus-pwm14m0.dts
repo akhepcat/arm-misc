@@ -13,4 +13,16 @@
     };
 };
 
-/* dtc -@ -A -s -O dtb -o /boot/dtb/rockchip/overlay/rk3588-pwm14m0.dtbo orangepi5plus-pwm14m0.dts */
+/* 
+	** Enables pwm14 for userspace
+
+        ## To install:
+
+	* dtc -A -s -@ -I dts -O dtb -o /boot/dtb/rockchip/overlay/rk3588-pwm14m0.dtbo orangepi5plus-pwm14m0.dts 
+
+        * Edit /boot/armbianEnv.txt and add
+                overlays=pwm14m0   ( or:  orverlays=[existing] pwm14m0 )
+
+        * reboot
+
+*/

@@ -41,7 +41,7 @@
 
         ## To install:
 
-        * dtc -A -s -@ -O dtb -o /boot/dtb/rockchip/overlay/rk3588-pwm-fan.dtbo orangepi5plus-pwm-fan.dts
+        * dtc -A -s -@ -I dts -O dtb -o /boot/dtb/rockchip/overlay/rk3588-pwm-fan.dtbo orangepi5plus-pwm-fan.dts
 
         *  Edit /boot/orangepiEnv.txt and add
                 overlays=pwm-fan   ( or:  orverlays=[existing] pwm-fan )

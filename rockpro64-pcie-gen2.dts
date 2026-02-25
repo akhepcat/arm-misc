@@ -5,23 +5,23 @@
 
 / {
 
-        fragment@0 {
-                target-path = "/pcie@f8000000";
-                __overlay__ {
-                        max-link-speed = <0x02>;
-
-                };
-        };
+	fragment@0 {
+		target = <&pcie0>;
+		__overlay__ {
+			max-link-speed = <0x02>;
+		};
+	};
+};
 
 /*
+	for max-link-speed:   1 = PCIe gen1,   2 = PCIe gen 2,    no others are supported
+
         ## To install:
 
-        *  dtc -@ -O dtb -o /boot/dtb/rockchip/overlay/rockchip-pcie-gen2.dtbo rockpro64-pcie-gen2.dts
+        * dtc -A -s -@ -I dts -O dtb -o /boot/dtb/rockchip/overlay/rockchip-pcie-gen2.dtbo rockpro64-pcie-gen2.dts
 
-        *  Edit /boot/armbianEnv.txt and add
+        * Edit /boot/armbianEnv.txt and add
                 overlays=pcie-gen2   ( or:  orverlays=[existing] pcie-gen2 )
 
-        *  reboot
+        * reboot
  */
-
-};

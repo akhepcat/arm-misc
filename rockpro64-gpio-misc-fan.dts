@@ -62,7 +62,7 @@
 
         ## To install:
 
-        * dtc -@ -I dts -O dtb -o /boot/dtb/rockchip/overlay/rockchip-gpio-misc-fan.dtbo rockpro64-gpio-misc-fan.dts
+        * dtc -A -s -@ -I dts -O dtb -o /boot/dtb/rockchip/overlay/rockchip-gpio-misc-fan.dtbo rockpro64-gpio-misc-fan.dts
 
         *  Edit /boot/orangepiEnv.txt and add
                 overlays=gpio-misc-fan   ( or:  orverlays=[existing] gpio-misc-fan )
