@@ -57,11 +57,18 @@ for file in  $(ls -1 ${prefix}-*.dts)
 do
 	CMD=$(grep -i dtc ${file} )
 	CMD=${CMD//*dtc/dtc}
-	
-	eval "${CMD}"
-	if [ $? ]
+
+	if [ -n "${CMD}" ]
 	then
-		echo "${file//.dts/} built successfully"
+		eval "${CMD}"
+		if [ $? ]
+		then
+			echo "${file//.dts/} built successfully"
+		else
+			echo "${file//.dts/} failed to build!"
+		fi
+	else
+		echo "${file//.dts/} skipped"
 	fi
 done
 
