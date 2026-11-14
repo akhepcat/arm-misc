@@ -26,9 +26,9 @@ then
 		exit 1
 	fi
 
-	PWMS=${PWMS%-*}
+#	PWMS=${PWMS%-*}
 
-	case ${PWMS%m*} in
+	case ${PWMS%-*} in
 		pwm0)	IOADDR=fd8b0000;;
 		pwm1)	IOADDR=fd8b0010;;
 		pwm3)	IOADDR=fd8b0030;;
