@@ -16,9 +16,11 @@
 /* 
 	** Enables pwm14 for userspace
 
+	** No longer needed on kernel > 6.18.0
+
         ## To install:
 
-	* dtc -A -s -@ -I dts -O dtb -o /boot/dtb/rockchip/overlay/rockchip-rk3588-pwm14m0.dtbo orangepi5plus-pwm14m0.dts 
+	* d t c -A -s -@ -I dts -O dtb -o /boot/dtb/rockchip/overlay/rockchip-rk3588-pwm14m0.dtbo orangepi5plus-pwm14m0.dts 
 
         * Edit /boot/armbianEnv.txt and add
                 overlays=pwm14m0   ( or:  orverlays=[existing] pwm14m0 )
