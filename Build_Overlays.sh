@@ -1,22 +1,39 @@
 #!/bin/bash
+## this code snippet is taken from Dan Dascalescu's response on
+## http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -h "$SOURCE" ]]
+do
+        # resolve $SOURCE until the file is no longer a symlink
+        DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+        SOURCE="$(readlink "$SOURCE")"
+        # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+PDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd -P )"
+ODIR=$(pwd -P)
+cd ${PDIR}
 
-if [ -e /sys/firmware/devicetree/base/model ]
-then
-	model=$(strings /sys/firmware/devicetree/base/model)
-elif [ -e /proc/device-tree/model ]
-then
-	model=$(strings /proc/device-tree/model)
-else
-	model=$(grep -iE 'rockpro|Orange.*pi.*5.*(plus|\+)' /proc/cpuinfo )
-fi
+#if [ -e /sys/firmware/devicetree/base/model ]
+#then
+#	model=$(strings /sys/firmware/devicetree/base/model)
+#elif [ -e /proc/device-tree/model ]
+#then
+#	model=$(strings /proc/device-tree/model)
+#else
+#	model=$(grep -iE 'rockpro|Orange.*pi.*5.*(plus|\+)' /proc/cpuinfo )
+#fi
 
-if [ -n "$1" ]
-then
-	model=$1
-elif [ -z "${model}${1}" ]
+model=$(grep -iE 'rockpro|Orange.*pi.*5.*(plus|\+)' /proc/cpuinfo || strings /proc/device-tree/model || strings /sys/firmware/devicetree/base/model)
+
+if [ -z "${model}${1}" ]
 then
 	echo "Can't determine model, exiting"
 	exit 1
+fi
+if [ -n "$1" ]
+then
+	model=$1
 fi
 
 model=${model,,}
@@ -42,4 +59,10 @@ do
 	CMD=${CMD//*dtc/dtc}
 	
 	eval "${CMD}"
+	if [ $? ]
+	then
+		echo "${file//.dts/} built successfully"
+	fi
 done
+
+cd "${ODIR}"
