@@ -14,17 +14,7 @@ PDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd -P )"
 ODIR=$(pwd -P)
 cd ${PDIR}
 
-#if [ -e /sys/firmware/devicetree/base/model ]
-#then
-#	model=$(strings /sys/firmware/devicetree/base/model)
-#elif [ -e /proc/device-tree/model ]
-#then
-#	model=$(strings /proc/device-tree/model)
-#else
-#	model=$(grep -iE 'rockpro|Orange.*pi.*5.*(plus|\+)' /proc/cpuinfo )
-#fi
-
-model=$(grep -iE 'rockpro|Orange.*pi.*5.*(plus|\+)' /proc/cpuinfo || strings /proc/device-tree/model || strings /sys/firmware/devicetree/base/model)
+model=$(grep -iE 'rockpro|Orange' /proc/cpuinfo || strings /proc/device-tree/model || strings /sys/firmware/devicetree/base/model)
 
 if [ -z "${model}${1}" ]
 then
@@ -42,8 +32,11 @@ if [ -z "${model##*rockpro*}" ];
 then
 	echo "Detected RockPro64"
 	prefix="rockpro64"
-
-elif [ -z "${model##*orange*}" ];
+elif [ -z "${model##*orange pi 4 pro*}" ];
+then
+	echo "Detected Orange Pi 4 Pro"
+	prefix="orangepi4pro"
+elif [ -z "${model##*orange pi 5 plus*}" ];
 then
 	echo "Detected Orange Pi 5+"
 	prefix="orangepi5plus"
@@ -53,7 +46,7 @@ else
 fi
 
 
-for file in  $(ls -1 ${prefix}-*.dts)
+for file in  $(ls -1 ${prefix}-*.dts 2>/dev/null)
 do
 	CMD=$(grep -i dtc ${file} )
 	CMD=${CMD//*dtc/dtc}
