@@ -20,7 +20,7 @@
 	## Notes:
 	pwms = <&pwm3 0 50000 0>：
 		arg 1 is the phandle for the PWM fan control; default is PWM3 ( 0x1d8 ); 
-		arg 2 is unknown.
+		arg 2 is the sub node of the phandle, 0 is the default
 		arg 3 is the period of the PWM pulse (1/$period = freq)
 		arg 4 is unknown.
 
