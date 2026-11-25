@@ -54,7 +54,7 @@ do
 	if [ -n "${CMD}" ]
 	then
 		eval "${CMD}"
-		if [ $? ]
+		if [[ $? -eq 0 ]]
 		then
 			echo "${file//.dts/} built successfully"
 		else
