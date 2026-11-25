@@ -3,14 +3,27 @@
 #KVER=$(uname -r)
 KVER=$(cd /boot; ls -1 vmlinuz-* | sed 's/vmlinuz-//g;' | tail -1)
 
-PLTF=$(grep 'fdtfile.*orange' /boot/armbianEnv.txt)
-if [ -n "${PLTF}" ]
+PLTF=$(grep -E '^[[:space:]]*fdtfile=' /boot/armbianEnv.txt)
+ftd="${PLTF}"
+PREFIX=$(grep -E '^[[:space:]]*overlay_prefix=' /boot/armbianEnv.txt)
+PREFIX="${PREFIX##*=}"
+PKG="${PLTF%%.*}"; PKG="${PKG%%/*}"; PKG="${PKG##*=}"
+PLTF="${PLTF##*/}"; PLTF="${PLTF%%.*}"; PLTF="${PLTF//-baked/}"
+
+if [[ -n "${PLTF}" ]]
 then
-	DTB="rk3588-orangepi-5-plus"
-	OVERLAYS=( rk3588-fanctrl rk3588-i2c8-m2 rk3588-pwm14-m0 rk3588-drive-led rk3588-pwm-fan $* )
-else
-	DTB="rk3399-rockpro64"
-	OVERLAYS=( rk3399-pcie-gen2 rk3399-i2c7 rk3399-i2c8 gpio-misc-led gpio-misc-fan $* )
+	case "${PLTF}" in
+		rk3588-orangepi-5-plus)		OVERLAYS=( rk3588-fanctrl rk3588-i2c8-m2 rk3588-pwm14-m0 rk3588-drive-led rk3588-pwm-fan $* )
+			;;
+		sun60i-a733-orangepi-4-pro)	OVERLAYS=( $* )
+			;;
+		rk3399-rockpro64)		OVERLAYS=( rk3399-pcie-gen2 rk3399-i2c7 rk3399-i2c8 gpio-misc-led gpio-misc-fan $* )
+			;;
+		*) OVERLAYS=( $* )
+			echo "unknown platform [${PLTF}] no defaults available, supply overlays on cli. break, or wait 5 sec to continue..."
+			sleep 5
+			;;
+	esac
 fi
 
 if [ -x /usr/local/src/arm-misc/Build_Overlays.sh ]
@@ -20,12 +33,12 @@ fi
 
 for i in ${OVERLAYS[@]}
 do
-	if [ -e "/boot/dtb-${KVER}/rockchip/overlay/rockchip-${i}.dtbo" ]
+	if [ -e "/boot/dtb-${KVER}/${PKG}/overlay/${PREFIX}-${i}.dtbo" ]
 	then
-		OVERLAY_FILES="${OVERLAY_FILES} /boot/dtb-${KVER}/rockchip/overlay/rockchip-${i}.dtbo"
-	elif [ -e "/boot/dtb-${KVER}/rockchip/overlay/${i}.dtbo" ]
+		OVERLAY_FILES="${OVERLAY_FILES} /boot/dtb-${KVER}/${PKG}/overlay/${PREFIX}-${i}.dtbo"
+	elif [ -e "/boot/dtb-${KVER}/${PKG}/overlay/${i}.dtbo" ]
 	then
-		OVERLAY_FILES="${OVERLAY_FILES} /boot/dtb-${KVER}/rockchip/overlay/${i}.dtbo"
+		OVERLAY_FILES="${OVERLAY_FILES} /boot/dtb-${KVER}/${PKG}/overlay/${i}.dtbo"
 	else
 		echo "ENOTFOUND: overlay ${i} skipped"
 	fi
@@ -35,11 +48,11 @@ done
 ftd=$(grep fdtfile= /boot/armbianEnv.txt)
 if [ -n "${ftd}" -a -z "${ftd##*baked*}" ]
 then
-    fdtoverlay -i /boot/dtb-${KVER}/rockchip/${DTB}.dtb \
-	   -o /boot/dtb-${KVER}/rockchip/${DTB}-baked.dtb \
+    fdtoverlay -i /boot/dtb-${KVER}/${PKG}/${DTB}.dtb \
+	   -o /boot/dtb-${KVER}/${PKG}/${DTB}-baked.dtb \
 	   ${OVERLAY_FILES}
 
-    echo "baked ftd overlay file /boot/dtb-${KVER}/rockchip/${DTB}-baked.dtb complete"
+    echo "baked ftd overlay file /boot/dtb-${KVER}/${PKG}/${DTB}-baked.dtb complete"
 else
     echo "Not using baked overlay:  updated fdtfile in armbianEnv to use baked version, otherwise load overlays via overlays="
 fi
