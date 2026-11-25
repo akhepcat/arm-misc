@@ -74,4 +74,8 @@ then
 	fi
 else
 	echo "no additional overlays found, not building new baked DTB"
+	if [[ -n "$(grep -E "^[[:space:]]*overlays=" /boot/armbianEnv.txt)" ]]
+	then
+		echo "overlays found in /boot/armbianEnv.txt will be loaded next boot"
+	fi
 fi
