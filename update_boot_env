@@ -11,13 +11,13 @@ done
 PDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd -P )"
 ## end
 
-bootscr=$(stat  --format="%Y" "${PDIR}/boot.scr")
-armenv=$(stat  --format="%Y" "${PDIR}/armbianEnv.txt")
+bootscr=$(stat  --format="%Y" "/boot/boot.scr")
+armenv=$(stat  --format="%Y" "/boot//armbianEnv.txt")
 
 if [[ ${bootscr:-0} -lt ${armenv:-0} ]]
 then
 	# mkscr
-	mkimage -C none -A arm -T script -d "${PDIR}/boot.cmd" "${PDIR}/boot.scr"
+	mkimage -C none -A arm -T script -d "/boot/boot.cmd" "/boot/boot.scr"
 else
-	echo "no update needed - have you modified ${PDIR}/armbianEnv.txt?"
+	echo "no update needed - have you modified /boot/armbianEnv.txt?"
 fi
