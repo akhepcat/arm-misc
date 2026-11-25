@@ -1,0 +1,23 @@
+#!/bin/bash
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -h "$SOURCE" ]]
+do
+        # resolve $SOURCE until the file is no longer a symlink
+        DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+        SOURCE="$(readlink "$SOURCE")"
+        # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+PDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd -P )"
+## end
+
+bootscr=$(stat  --format="%Y" "${PDIR}/boot.scr")
+armenv=$(stat  --format="%Y" "${PDIR}/armbianEnv.txt")
+
+if [[ ${bootscr:-0} -lt ${armenv:-0} ]]
+then
+	# mkscr
+	mkimage -C none -A arm -T script -d "${PDIR}/boot.cmd" "${PDIR}/boot.scr"
+else
+	echo "no update needed - have you modified ${PDIR}/armbianEnv.txt?"
+fi

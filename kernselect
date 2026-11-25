@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# $ ls -1 -d *5.10.110*
+# dtb-5.10.110-rockchip-rk3588/
+# config-5.10.110-rockchip-rk3588*
+# initrd.img-5.10.110-rockchip-rk3588*
+# System.map-5.10.110-rockchip-rk3588*
+# vmlinuz-5.10.110-rockchip-rk3588*
+
+CWD=$(pwd)
+cd /boot
+
+if [ -z "$1" ]
+then
+
+    vers=$(ls -1 vmlinuz-* | sed 's/vmlinuz-//g;')
+    for v in ${vers}
+    do
+	if [ -d "dtb-${v}" -a -r "initrd.img-${v}" ]
+	then
+	    echo "${v}"
+	fi
+    done
+    echo "run ${0} {ver from above list}"
+else
+    v=$1
+    if [ -d "dtb-${v}" -a -r "initrd.img-${v}" -a -r "vmlinuz-${v}" ]
+    then
+	    echo "selected version ${v}"
+	    ln -sf "vmlinuz-${v}" Image
+	    ln -sf "vmlinuz-${v}" vmlinuz
+	    ln -sf "uInitrd-${v}" uInitrd
+	    ln -sf "initrd.img-${v}" initrd.img
+	    rm -rf dtb && ln -sf "dtb-${v}" dtb
+
+	    [[ -x /boot/update_dtbo ]] && /boot/update_dtbo
+	    mkimage -C none -A arm -T script -d /boot/boot.cmd /boot/boot.scr
+    fi
+fi
+
+cd ${CWD}

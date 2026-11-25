@@ -1,6 +1,22 @@
 # arm-misc
 Miscellaneous things for ARM systems to make my life easier
 
+* kernselect
+
+  You can keep and select between multiple kernels, and this script will
+auto-update the initrd, dtd, and kernel links
+
+* update_dtbo
+
+  Rebuilds a full-merged dtbo with listed overlays to overcome dynamic
+loading issues with namespaces, link resolution, or number of dtos
+
+* update_boot_env
+
+  Checks for updates to the master config files, and regenerates the merged
+configration files for uboot.
+
+
 Orange PI 5+:
 
 * orangepi5plus-gpio-drive-led.dts

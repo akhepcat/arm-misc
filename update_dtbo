@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#KVER=$(uname -r)
+KVER=$(cd /boot; ls -1 vmlinuz-* | sed 's/vmlinuz-//g;' | tail -1)
+
+PLTF=$(grep 'fdtfile.*orange' /boot/armbianEnv.txt)
+if [ -n "${PLTF}" ]
+then
+	DTB="rk3588-orangepi-5-plus"
+	OVERLAYS=( rk3588-fanctrl rk3588-i2c8-m2 rk3588-pwm14-m0 rk3588-drive-led rk3588-pwm-fan $* )
+else
+	DTB="rk3399-rockpro64"
+	OVERLAYS=( rk3399-pcie-gen2 rk3399-i2c7 rk3399-i2c8 gpio-misc-led gpio-misc-fan $* )
+fi
+
+if [ -x /usr/local/src/arm-misc/Build_Overlays.sh ]
+then
+	/usr/local/src/arm-misc/Build_Overlays.sh
+fi
+
+for i in ${OVERLAYS[@]}
+do
+	if [ -e "/boot/dtb-${KVER}/rockchip/overlay/rockchip-${i}.dtbo" ]
+	then
+		OVERLAY_FILES="${OVERLAY_FILES} /boot/dtb-${KVER}/rockchip/overlay/rockchip-${i}.dtbo"
+	elif [ -e "/boot/dtb-${KVER}/rockchip/overlay/${i}.dtbo" ]
+	then
+		OVERLAY_FILES="${OVERLAY_FILES} /boot/dtb-${KVER}/rockchip/overlay/${i}.dtbo"
+	else
+		echo "ENOTFOUND: overlay ${i} skipped"
+	fi
+done
+
+
+ftd=$(grep fdtfile= /boot/armbianEnv.txt)
+if [ -n "${ftd}" -a -z "${ftd##*baked*}" ]
+then
+    fdtoverlay -i /boot/dtb-${KVER}/rockchip/${DTB}.dtb \
+	   -o /boot/dtb-${KVER}/rockchip/${DTB}-baked.dtb \
+	   ${OVERLAY_FILES}
+
+    echo "baked ftd overlay file /boot/dtb-${KVER}/rockchip/${DTB}-baked.dtb complete"
+else
+    echo "Not using baked overlay:  updated fdtfile in armbianEnv to use baked version, otherwise load overlays via overlays="
+fi
