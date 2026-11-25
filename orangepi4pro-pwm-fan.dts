@@ -18,8 +18,10 @@
 		__overlay__ {
 			fan: pwm-fan {
 				compatible = "pwm-fan";
-				pwms = <&pwm0 5 50000 0>; /* channel 0 of pwm0_5, 50000ns = 20kHz */
-				cooling-levels = <0 37 88 128 200 255>;
+				pwms = <&pwm0 5 5000000 0>; /* channel 0 of pwm0_5, 50000ns =20kHz, 5000000 = 200hz */
+				cooling-levels = <0 64 128 192 224 255>;
+				cooling-min-state = <0>;
+				cooling-max-state = <5>;
 				#cooling-cells = <2>;
 			};
 		};
@@ -104,6 +106,7 @@
 		The number of steps, and percentage of the duty cycle, are defined here.
 		The default configuration defines 6 steps. The range of the speed is 0-255.  (0=0%, 255=100%)
 		level=( int( $duty_cycle_percent / (100/256=.390625) ) - 1);
+		some fans won't spin up below a 70% duty cycle! (180)
 
 	temp-trips：It is used to configure the corresponding relationship between the CPU temperature and the fan speed. 
 		It can be adjusted according to actual needs. The default configuration is:
