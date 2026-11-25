@@ -46,13 +46,18 @@ done
 FTD="${FTD##*/}"
 FTD="${FTD//.dtb/}"
 
-fdtoverlay -i /boot/dtb-${KVER}/${PKG}/${FTD//-baked/}.dtb \
+if [[ -n "${OVERLAY_FILES}" ]]
+then
+	fdtoverlay -i /boot/dtb-${KVER}/${PKG}/${FTD//-baked/}.dtb \
 	   -o /boot/dtb-${KVER}/${PKG}/${FTD//-baked/}-baked.dtb \
 	   ${OVERLAY_FILES}
 
-if [ -n "${FTD}" -a -z "${FTD##*baked*}" ]
-then
-    echo "baked ftd overlay file /boot/dtb-${KVER}/${PKG}/${DTB}-baked.dtb complete"
+	if [ -n "${FTD}" -a -z "${FTD##*baked*}" ]
+	then
+	    echo "baked ftd overlay file /boot/dtb-${KVER}/${PKG}/${DTB}-baked.dtb complete"
+	else
+	    echo "Not using baked overlay:  updated fdtfile in armbianEnv to use baked version, otherwise load overlays via overlays="
+	fi
 else
-    echo "Not using baked overlay:  updated fdtfile in armbianEnv to use baked version, otherwise load overlays via overlays="
+	echo "no additional overlays found, not building new baked DTB"
 fi
