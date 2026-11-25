@@ -68,7 +68,7 @@ then
 
 	if [ -n "${FTD}" -a -z "${FTD##*baked*}" ]
 	then
-	    echo "baked ftd overlay file /boot/dtb-${KVER}/${PKG}/${DTB}-baked.dtb complete"
+	    echo "baked ftd overlay file /boot/dtb-${KVER}/${PKG}/${FTD}-baked.dtb complete"
 	else
 	    echo "Not using baked overlay:  updated fdtfile in armbianEnv to use baked version, otherwise load overlays via overlays="
 	fi
