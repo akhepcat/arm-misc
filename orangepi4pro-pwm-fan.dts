@@ -4,17 +4,93 @@
 /plugin/;
 
 / {
+	/* 1. Enable PWM0 Channel 5 (Physical Pin 32) */
+	fragment@0 {
+		target = <&pwm0_5>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
 
-        fragment@0 {
-                target = <&fan>;
-                __overlay__ {
-			pwms = <&pwm0 5 50000 0>;
-			cooling-levels = <0 37 88 128 200 255>;
-			rockchip,temp-trips = <35000 1 42000 2 50000 3 60000 4 70000 5>;
-                };
-        };
+	/* 2. Create the pwm-fan cooling device */
+	fragment@1 {
+		target-path = "/";
+		__overlay__ {
+			fan: pwm-fan {
+				compatible = "pwm-fan";
+				pwms = <&pwm0 5 50000 0>; /* channel 0 of pwm0_5, 50000ns = 20kHz */
+				cooling-levels = <0 37 88 128 200 255>;
+				#cooling-cells = <2>;
+			};
+		};
+	};
+
+	/* 3. Bind temperature trips to the Big-core CPU thermal zone */
+	fragment@2 {
+		target-path = "/thermal-zones/cpub_thermal_zone";
+		__overlay__ {
+			trips {
+				fan_trip0: fan-trip0 { temperature = <40000>; hysteresis = <2000>; type = "active"; };
+				fan_trip1: fan-trip1 { temperature = <46000>; hysteresis = <2000>; type = "active"; };
+				fan_trip2: fan-trip2 { temperature = <53000>; hysteresis = <2000>; type = "active"; };
+				fan_trip3: fan-trip3 { temperature = <62000>; hysteresis = <2000>; type = "active"; };
+				fan_trip4: fan-trip4 { temperature = <70000>; hysteresis = <2000>; type = "active"; };
+			};
+
+			cooling-maps { 
+				map0 { trip = <&fan_trip0>; cooling-device = <&fan 0 1>; };
+				map1 { trip = <&fan_trip1>; cooling-device = <&fan 1 2>; };
+				map2 { trip = <&fan_trip2>; cooling-device = <&fan 2 3>; };
+				map3 { trip = <&fan_trip3>; cooling-device = <&fan 3 4>; };
+				map4 { trip = <&fan_trip4>; cooling-device = <&fan 4 5>; };
+			};
+		};
+	}; /* fragment 2 */
+
+	/* 4. NPU Thermal Zone */
+	fragment@3 {
+		target-path = "/thermal-zones/npu_thermal_zone";
+		__overlay__ {
+			trips {
+				npu_trip0: npu-trip0 { temperature = <40000>; hysteresis = <2000>; type = "active"; };
+				npu_trip1: npu-trip1 { temperature = <46000>; hysteresis = <2000>; type = "active"; };
+				npu_trip2: npu-trip2 { temperature = <53000>; hysteresis = <2000>; type = "active"; };
+				npu_trip3: npu-trip3 { temperature = <62000>; hysteresis = <2000>; type = "active"; };
+				npu_trip4: npu-trip4 { temperature = <70000>; hysteresis = <2000>; type = "active"; };
+			};
+
+			cooling-maps {
+				map0 { trip = <&npu_trip0>; cooling-device = <&fan 0 1>; };
+				map1 { trip = <&npu_trip1>; cooling-device = <&fan 1 2>; };
+				map2 { trip = <&npu_trip2>; cooling-device = <&fan 2 3>; };
+				map3 { trip = <&npu_trip3>; cooling-device = <&fan 3 4>; };
+				map4 { trip = <&npu_trip4>; cooling-device = <&fan 4 5>; };
+			};
+		};
+	};
+
+	/* 5. GPU Thermal Zone */
+	fragment@4 {
+		target-path = "/thermal-zones/gpu_thermal_zone";
+		__overlay__ {
+			trips {
+				gpu_trip0: gpu-trip0 { temperature = <40000>; hysteresis = <2000>; type = "active"; };
+				gpu_trip1: gpu-trip1 { temperature = <46000>; hysteresis = <2000>; type = "active"; };
+				gpu_trip2: gpu-trip2 { temperature = <53000>; hysteresis = <2000>; type = "active"; };
+				gpu_trip3: gpu-trip3 { temperature = <62000>; hysteresis = <2000>; type = "active"; };
+				gpu_trip4: gpu-trip4 { temperature = <70000>; hysteresis = <2000>; type = "active"; };
+			};
+
+			cooling-maps {
+				map0 { trip = <&gpu_trip0>; cooling-device = <&fan 0 1>; };
+				map1 { trip = <&gpu_trip1>; cooling-device = <&fan 1 2>; };
+				map2 { trip = <&gpu_trip2>; cooling-device = <&fan 2 3>; };
+				map3 { trip = <&gpu_trip3>; cooling-device = <&fan 3 4>; };
+				map4 { trip = <&gpu_trip4>; cooling-device = <&fan 4 5>; };
+			};
+		};
+	};
 };
-
 
 /* 
 	## Notes:
@@ -24,18 +100,18 @@
 		arg 3 is the period of the PWM pulse (1/$period = freq)
 		arg 4 is unknown.
 
-	cooling-levels = <0 50 100 150 200 255>：It is used to configure the steppings for the fan speed (PWM duty cycle). 
+	cooling-levels = <0 37 88 128 200 255> ：It is used to configure the steppings for the fan speed (PWM duty cycle). 
 		The number of steps, and percentage of the duty cycle, are defined here.
 		The default configuration defines 6 steps. The range of the speed is 0-255.  (0=0%, 255=100%)
 		level=( int( $duty_cycle_percent / (100/256=.390625) ) - 1);
 
-	rockchip,temp-trips：It is used to configure the corresponding relationship between the CPU temperature and the fan speed. 
+	temp-trips：It is used to configure the corresponding relationship between the CPU temperature and the fan speed. 
 		It can be adjusted according to actual needs. The default configuration is:
 		(step 0: inferred, anything below step 1)
-		step 1: 50 degrees
-		step 2: 55
-		step 3: 60
-		step 4: 65
+		step 1: 40 degrees
+		step 2: 46
+		step 3: 53
+		step 4: 62
 		step 5: 70 degrees
 
 
@@ -44,8 +120,10 @@
         * dtc -A -s -@ -I dts -O dtb -o /boot/dtb/allwinner/overlay/sun60i-a733-pwm-fan.dtbo orangepi4pro-pwm-fan.dts
 
         *  Edit /boot/armbianEnv.txt (or /boot/orangepiEnv.txt) and add
-                overlays=pwm-fan   ( or:  orverlays=[existing] pwm-fan )
+                overlays=pwm-fan   ( or:  overlays=[existing] pwm-fan )
 
-        *  reboot
+	*  remove existing pwm0  from overlays, if it exists
+
+        *  Save, update the boot environment, and reboot
 
 */
