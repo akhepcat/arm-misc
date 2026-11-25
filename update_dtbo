@@ -4,7 +4,7 @@
 KVER=$(cd /boot; ls -1 vmlinuz-* | sed 's/vmlinuz-//g;' | tail -1)
 
 PLTF=$(grep -E '^[[:space:]]*fdtfile=' /boot/armbianEnv.txt)
-ftd="${PLTF}"
+FTD="${PLTF##*=}"
 PREFIX=$(grep -E '^[[:space:]]*overlay_prefix=' /boot/armbianEnv.txt)
 PREFIX="${PREFIX##*=}"
 PKG="${PLTF%%.*}"; PKG="${PKG%%/*}"; PKG="${PKG##*=}"
@@ -43,15 +43,15 @@ do
 		echo "ENOTFOUND: overlay ${i} skipped"
 	fi
 done
+FTD="${FTD##*/}"
+FTD="${FTD//.dtb/}"
 
-
-ftd=$(grep fdtfile= /boot/armbianEnv.txt)
-if [ -n "${ftd}" -a -z "${ftd##*baked*}" ]
-then
-    fdtoverlay -i /boot/dtb-${KVER}/${PKG}/${DTB}.dtb \
-	   -o /boot/dtb-${KVER}/${PKG}/${DTB}-baked.dtb \
+fdtoverlay -i /boot/dtb-${KVER}/${PKG}/${FTD//-baked/}.dtb \
+	   -o /boot/dtb-${KVER}/${PKG}/${FTD//-baked/}-baked.dtb \
 	   ${OVERLAY_FILES}
 
+if [ -n "${FTD}" -a -z "${FTD##*baked*}" ]
+then
     echo "baked ftd overlay file /boot/dtb-${KVER}/${PKG}/${DTB}-baked.dtb complete"
 else
     echo "Not using baked overlay:  updated fdtfile in armbianEnv to use baked version, otherwise load overlays via overlays="
