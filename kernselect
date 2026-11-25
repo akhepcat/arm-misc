@@ -1,13 +1,12 @@
 #!/bin/bash
-
-# $ ls -1 -d *5.10.110*
-# dtb-5.10.110-rockchip-rk3588/
-# config-5.10.110-rockchip-rk3588*
-# initrd.img-5.10.110-rockchip-rk3588*
-# System.map-5.10.110-rockchip-rk3588*
-# vmlinuz-5.10.110-rockchip-rk3588*
-
+trap cleanup SIGINT SIGTERM
 CWD=$(pwd)
+
+cleanup() {
+	cd ${CWD}
+	exit
+}
+
 cd /boot
 
 if [ -z "$1" ]
@@ -38,4 +37,4 @@ else
     fi
 fi
 
-cd ${CWD}
+cleanup
