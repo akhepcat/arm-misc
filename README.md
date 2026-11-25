@@ -1,6 +1,9 @@
 # arm-misc
 Miscellaneous things for ARM systems to make my life easier
 
+I symlink these three scripts into /boot, they'll figure out where they are
+and work correctly
+
 * kernselect
 
   You can keep and select between multiple kernels, and this script will
